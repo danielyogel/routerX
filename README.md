@@ -2,7 +2,7 @@
 
 ## Objectives
 
-1. Declerative MobX Router
+1. Declarative MobX Router
 
 ## Commands
 
