@@ -4,7 +4,7 @@ import browserPlugin from 'router5-plugin-browser';
 import { observable } from 'mobx';
 import { mapValues } from '../utils/functionalProgramming';
 
-export default function RouterX<T extends Record<string, string>>(routes: T, defaultRoute: keyof T, defaultParams: Record<string, string>) {
+export default function RouterX<T extends Record<string, string>>(routes: T, defaultRoute: keyof T, defaultParams: Record<string, string | number>) {
   const ROUTE_ENTERIES_ARRAY = Object.entries(routes).map(([name, path]) => ({
     name,
     path
