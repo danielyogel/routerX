@@ -13,7 +13,8 @@ const router = RouterX(
     'APP.CAMPAIGNS.NEW': '/new',
     'APP.CAMPAIGNS.EDIT': '/:id'
   },
-  'HOMEPAGE'
+  'HOMEPAGE',
+  {}
 );
 
 describe('RouterX', () => {

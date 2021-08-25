@@ -1,7 +1,7 @@
 import React from 'react';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
-import { observable } from 'mobx';
+import { observable, computed } from 'mobx';
 import { mapValues } from '../utils/functionalProgramming';
 
 export default function RouterX<T extends Record<string, string>>(routes: T, defaultRoute: keyof T, defaultParams: Record<string, string | number>) {
@@ -27,9 +27,29 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
     ROUTE_ENTERIES_ARRAY.forEach(e => activeNodes[e.name].set(router.isActive(e.name, currParams)));
   });
 
-  const navigate = mapValues(routes, (_, currRouteName) => {
-    return (p?: Record<string, string>) => router.navigate(currRouteName, { ...p });
-  });
+  const navigate = {
+    ...mapValues(routes, (_, currRouteName) => {
+      return (p?: Record<string, string> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+        if (!p) {
+          router.navigate(currRouteName, params.get());
+        } else if (typeof p === 'function') {
+          router.navigate(currRouteName, p({ ...params.get() }));
+        } else {
+          router.navigate(currRouteName, { ...p });
+        }
+      };
+    }),
+    currentRoute: (p?: Record<string, string> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+      const currRouteName = selectedPage.get() as string;
+      if (!p) {
+        router.navigate(currRouteName, params.get());
+      } else if (typeof p === 'function') {
+        router.navigate(currRouteName, p({ ...params.get() }));
+      } else {
+        router.navigate(currRouteName, { ...p });
+      }
+    }
+  };
 
   const link = mapValues(routes, (currRoutePath, currRouteName) => {
     return () => (
@@ -51,7 +71,7 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
     navigate,
     link,
     activeNodes,
-    params
+    params: computed(() => params.get())
   };
 }
 
