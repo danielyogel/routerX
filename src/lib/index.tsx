@@ -29,7 +29,7 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
 
   const navigate = {
     ...mapValues(routes, (_, currRouteName) => {
-      return (p?: Record<string, string> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+      return (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
         if (!p) {
           router.navigate(currRouteName, params.get());
         } else if (typeof p === 'function') {
@@ -38,18 +38,25 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
           const omittedNulls = omitBy(newParams, v => v === null);
           router.navigate(currRouteName, omittedNulls);
         } else {
-          router.navigate(currRouteName, { ...p });
+          const newParams = { ...p };
+          const omittedNulls = omitBy(newParams, v => v === null);
+          router.navigate(currRouteName, omittedNulls);
         }
       };
     }),
-    currentRoute: (p?: Record<string, string> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+    currentRoute: (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
       const currRouteName = selectedPage.get() as string;
       if (!p) {
         router.navigate(currRouteName, params.get());
       } else if (typeof p === 'function') {
-        router.navigate(currRouteName, p({ ...params.get() }));
+        const oldParams = { ...params.get() };
+        const newParams = p(oldParams);
+        const omittedNulls = omitBy(newParams, v => v === null);
+        router.navigate(currRouteName, omittedNulls);
       } else {
-        router.navigate(currRouteName, { ...p });
+        const newParams = { ...p };
+        const omittedNulls = omitBy(newParams, v => v === null);
+        router.navigate(currRouteName, omittedNulls);
       }
     }
   };
