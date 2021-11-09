@@ -29,7 +29,7 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
 
   const navigate = {
     ...mapValues(routes, (_, currRouteName) => {
-      return (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+      return (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string | null>)) => {
         if (!p) {
           router.navigate(currRouteName, params.get());
         } else if (typeof p === 'function') {
@@ -44,7 +44,7 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
         }
       };
     }),
-    currentRoute: (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string>)) => {
+    currentRoute: (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string | null>)) => {
       const currRouteName = selectedPage.get() as string;
       if (!p) {
         router.navigate(currRouteName, params.get());
