@@ -2,7 +2,7 @@ import React from 'react';
 import createRouter from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import { observable, computed } from 'mobx';
-import { mapValues } from '../utils/functionalProgramming';
+import { mapValues, omitBy } from '../utils/functionalProgramming';
 
 export default function RouterX<T extends Record<string, string>>(routes: T, defaultRoute: keyof T, defaultParams: Record<string, string | number>) {
   const ROUTE_ENTERIES_ARRAY = Object.entries(routes).map(([name, path]) => ({
@@ -33,7 +33,10 @@ export default function RouterX<T extends Record<string, string>>(routes: T, def
         if (!p) {
           router.navigate(currRouteName, params.get());
         } else if (typeof p === 'function') {
-          router.navigate(currRouteName, p({ ...params.get() }));
+          const oldParams = { ...params.get() };
+          const newParams = p(oldParams);
+          const omittedNulls = omitBy(newParams, v => v === null);
+          router.navigate(currRouteName, omittedNulls);
         } else {
           router.navigate(currRouteName, { ...p });
         }

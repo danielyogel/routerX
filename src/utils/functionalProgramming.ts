@@ -6,6 +6,7 @@ export { default as mapValues } from 'lodash/mapValues';
 export { default as isEqual } from 'lodash/isEqual';
 export { default as sortBy } from 'lodash/sortBy';
 export { default as omit } from 'lodash/omit';
+export { default as omitBy } from 'lodash/omitBy';
 export { default as pick } from 'lodash/pick';
 export { default as startCase } from 'lodash/startCase';
 
