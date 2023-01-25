@@ -18,15 +18,11 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "ladle": "ladle serve"
   },
   "peerDependencies": {
     "react": ">=16"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
   },
   "prettier": {
     "printWidth": 150,
@@ -52,6 +48,7 @@
     "typescript": "4.3.5"
   },
   "dependencies": {
+    "@ladle/react": "^2.4.5",
     "@types/lodash": "^4.14.171",
     "fp-ts": "2.11",
     "io-ts": "^2.2.16",
