@@ -12,6 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
+    "dev": "concurrently --group --raw \"tsc --noEmit --watch\" \"npm run ladle\" \"npm run test\"",
+    "typecheck": "tsc --noEmit",
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
@@ -31,6 +33,7 @@
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.8",
     "babel-loader": "^8.2.2",
+    "concurrently": "^7.6.0",
     "husky": "^4.3.8",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
