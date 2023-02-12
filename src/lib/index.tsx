@@ -1,5 +1,5 @@
 import React from 'react';
-import createRouter from 'router5';
+import createRouter, { NavigationOptions, State } from 'router5';
 import browserPlugin from 'router5-plugin-browser';
 import { observable, computed } from 'mobx';
 import { mapValues, omitBy } from '../utils/functionalProgramming';
@@ -16,6 +16,7 @@ export default function RouterX<T extends Record<string, string>>(
   }));
 
   type RouteName = keyof typeof routes;
+  type OptionalParamsType = Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string | null>);
 
   const router = createRouter(ROUTE_ENTERIES_ARRAY, { defaultRoute: defaultRoute.toString(), defaultParams, ...options });
   router.usePlugin(browserPlugin({}));
@@ -29,40 +30,43 @@ export default function RouterX<T extends Record<string, string>>(
     selectedPage.set(route.name as RouteName);
     const { params: currParams } = router.getState();
     params.set(currParams);
-    ROUTE_ENTERIES_ARRAY.forEach(e => activeNodes[e.name].set(router.isActive(e.name, currParams)));
+    ROUTE_ENTERIES_ARRAY.forEach((e) => activeNodes[e.name].set(router.isActive(e.name, currParams)));
   });
 
   const navigate = {
     ...mapValues(routes, (_, currRouteName) => {
-      return (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string | null>)) => {
+      return (p?: OptionalParamsType, options?: NavigationOptions) => {
         if (!p) {
-          router.navigate(currRouteName, params.get());
+          router.navigate(currRouteName, params.get(), options ? options : {});
         } else if (typeof p === 'function') {
           const oldParams = { ...params.get() };
           const newParams = p(oldParams);
-          const omittedNulls = omitBy(newParams, v => v === null);
-          router.navigate(currRouteName, omittedNulls);
+          const omittedNulls = omitBy(newParams, (v) => v === null);
+          router.navigate(currRouteName, omittedNulls, options ? options : {});
         } else {
           const newParams = { ...p };
-          const omittedNulls = omitBy(newParams, v => v === null);
-          router.navigate(currRouteName, omittedNulls);
+          const omittedNulls = omitBy(newParams, (v) => v === null);
+          router.navigate(currRouteName, omittedNulls, options ? options : {});
         }
       };
     }),
-    currentRoute: (p?: Record<string, string | null> | ((prevParams: Record<string, string>) => Record<string, string | null>)) => {
+    currentRoute: (p?: OptionalParamsType) => {
       const currRouteName = selectedPage.get() as string;
       if (!p) {
         router.navigate(currRouteName, params.get());
       } else if (typeof p === 'function') {
         const oldParams = { ...params.get() };
         const newParams = p(oldParams);
-        const omittedNulls = omitBy(newParams, v => v === null);
+        const omittedNulls = omitBy(newParams, (v) => v === null);
         router.navigate(currRouteName, omittedNulls);
       } else {
         const newParams = { ...p };
-        const omittedNulls = omitBy(newParams, v => v === null);
+        const omittedNulls = omitBy(newParams, (v) => v === null);
         router.navigate(currRouteName, omittedNulls);
       }
+    },
+    setState(state: State) {
+      router.setState(state);
     }
   };
 
@@ -71,7 +75,7 @@ export default function RouterX<T extends Record<string, string>>(
       <a
         href={currRoutePath}
         style={{ textTransform: 'capitalize' }}
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           router.navigate(currRouteName);
         }}
