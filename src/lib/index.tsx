@@ -64,10 +64,11 @@ export default function RouterX<T extends Record<string, string>>(
         const omittedNulls = omitBy(newParams, (v) => v === null);
         router.navigate(currRouteName, omittedNulls);
       }
-    },
-    setState(state: State) {
-      router.setState(state);
     }
+  };
+
+  const setState = (state: State) => {
+    router.setState(state);
   };
 
   const link = mapValues(routes, (currRoutePath, currRouteName) => {
@@ -88,6 +89,7 @@ export default function RouterX<T extends Record<string, string>>(
   return {
     selectedPage,
     navigate,
+    setState,
     link,
     activeNodes,
     params: computed(() => params.get())
