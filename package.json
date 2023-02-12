@@ -24,13 +24,6 @@
   "peerDependencies": {
     "react": ">=16"
   },
-  "prettier": {
-    "printWidth": 150,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "none",
-    "arrowParens": "avoid"
-  },
   "author": "Daniel Yogel",
   "devDependencies": {
     "@babel/core": "^7.14.6",
